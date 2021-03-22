@@ -1,0 +1,62 @@
+[Name]=Online TV Database
+[BasedOn]=https://www.thetvdb.com
+[IndexUrl]=https://www.thetvdb.com/series/%s
+[AlbumUrl]=https://www.thetvdb.com/series/
+[WordSeperator]=+
+[IndexFormat]=%_url%
+[SearchBy]=Artist||%artist%||%s
+[Encoding]=utf-8
+
+[ParserScriptIndex]=...
+debug "on" "C:\Users\Paul\Desktop\debug_thetvdb_index.txt"
+
+FindLine "<title>"
+FindInLine "<title>"
+SayUntil " -"
+FindLine "<h2>Seasons</h2>"
+FindLine "<li class="list-group-item" data-number=\"1"
+FindInLine "data-number=\""
+Say "/seasons/official/"
+SayNextNumber
+
+[ParserScriptAlbum]=...
+debug "on" "C:\Users\Paul\Desktop\debug_thetvdb_album.txt"
+
+FindLine "<title>"
+FindInLine "<title>"
+OutputTo "ARTIST"
+SayUntil " -"
+
+GotoChar 1
+FindInLine "<title>"
+OutputTo "ALBUMARTIST"
+SayUntil " -"
+
+FindInLine " -"
+FindInLine " -"
+OutputTo "ALBUM"
+SayUntil " -"
+
+FindLine "<tbody>"
+
+Do
+    FindLine "<td>"
+    MoveLine 1
+    FindLine "<td>"
+    MoveLine 2
+
+    OutputTo "TITLE"
+    SayRest
+    Say "|"
+
+    FindLine "<td>"
+    FindLine "<div>"
+    FindInLine ", "
+    OutputTo "YEAR"
+    SayUntil "<"
+    Say "|"
+
+    FindLine "</tr>"
+    MoveLine 1 1
+    Unspace
+While "<tr>"
